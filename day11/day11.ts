@@ -9,37 +9,32 @@ function last<T>(arr: T[]): T {
   return arr.slice(-1)[0];
 }
 
-function sum(a: BigInt, b: BigInt): BigInt {
-  // @ts-ignore
+function sum(a: number, b: number): number {
   return a + b;
 }
 
-function mult(a: BigInt, b: BigInt): BigInt {
-  // @ts-ignore
+function mult(a: number, b: number): number {
   return a * b;
 }
 
-function double(x: BigInt): BigInt {
-  // @ts-ignore
+function double(x: number): number {
   return x + x;
 }
 
-function square(x: BigInt): BigInt {
-  // @ts-ignore
+function square(x: number): number {
   return x * x;
 }
 
-function divisibleBy(divisor: BigInt, num: BigInt): boolean {
-  // @ts-ignore
-  return num % divisor === 0n;
+function divisibleBy(divisor: number, num: number): boolean {
+  return num % divisor === 0;
 }
 
 interface Operation {
-  (item: BigInt): BigInt;
+  (item: number): number;
 }
 
 interface Test {
-  (item: BigInt): boolean;
+  (item: number): boolean;
 }
 
 type Action = {
@@ -49,18 +44,18 @@ type Action = {
 };
 
 class Monkey {
-  private items: BigInt[] = [];
+  private items: number[] = [];
   private operation: Operation | null = null;
   private action: Action | null = null;
   public numInspections: number = 0;
 
-  constructor(private _commonDivisor: BigInt) {}
+  constructor(private _commonDivisor: number) {}
 
   getItems() {
     return this.items;
   }
 
-  setItems(items: BigInt[]) {
+  setItems(items: number[]) {
     this.items = items;
   }
 
@@ -72,9 +67,8 @@ class Monkey {
     this.action = action;
   }
 
-  addItem(item: BigInt) {
-    // @ts-ignore
-    const divided: BigInt = item % this._commonDivisor;
+  addItem(item: number) {
+    const divided: number = item % this._commonDivisor;
     this.items = [...this.items, divided];
   }
 
@@ -103,7 +97,7 @@ function initMonkeysFromInput(monkeys: Monkey[], input: string) {
     const startingItems = lines
       .match(/Starting items: (.*)/)![1]
       .split(', ')
-      .map((item) => BigInt(item));
+      .map((item) => parseInt(item));
 
     const operation = parseOperationText(lines.match(/Operation: new = (.*)/)![1]);
 
@@ -115,7 +109,7 @@ function initMonkeysFromInput(monkeys: Monkey[], input: string) {
     monkeys[index].setItems(startingItems);
     monkeys[index].setOperation(operation);
     monkeys[index].setAction({
-      test: divisibleBy.bind(null, BigInt(testDivisor)),
+      test: divisibleBy.bind(null, testDivisor),
       trueTarget: monkeys[trueTargetNum],
       falseTarget: monkeys[falseTargetNum],
     });
@@ -131,11 +125,11 @@ function parseOperationText(operationText: string): Operation {
   switch (true) {
     case op === '+': {
       if (input2 === 'old') return double;
-      return sum.bind(null, BigInt(input2));
+      return sum.bind(null, parseInt(input2));
     }
     case op === '*': {
       if (input2 === 'old') return square;
-      return mult.bind(null, BigInt(input2));
+      return mult.bind(null, parseInt(input2));
     }
     default:
       throw new Error(`Unrecognised operation: ${op}`);
@@ -154,7 +148,7 @@ function run() {
 
   const monkeys: Monkey[] = Array(matches.length)
     .fill(null)
-    .map((_) => new Monkey(BigInt(allDivisors.reduce((product, num) => product * num, 1))));
+    .map((_) => new Monkey(allDivisors.reduce((product, num) => product * num, 1)));
 
   initMonkeysFromInput(monkeys, input);
   console.log(monkeys);
